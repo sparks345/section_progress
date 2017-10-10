@@ -34,7 +34,7 @@ public class SectionProgressBar extends View {
     // block width.
     private int mBlockWidth = 6 * 2;
 
-    private int mAlpha = 100;
+    // anim timer for select section.
     private AnimationTimer mAnimTimer;
 
     public SectionProgressBar(Context context) {
@@ -72,6 +72,14 @@ public class SectionProgressBar extends View {
         if (percent > 100 || percent < 0) {
             throw new IllegalArgumentException("percent must between 0.0F and 100.0F");
         }
+
+        Section lastSection = null;
+
+        if (mSections.size() > 0) {
+            lastSection = mSections.get(mSections.size() - 1);
+            lastSection.setSelection(false);
+        }
+
         mCurrentProgress = percent;
         postInvalidate();
     }
@@ -134,14 +142,17 @@ public class SectionProgressBar extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        int width = getWidth() - getPaddingLeft() - getPaddingRight();
-        int aimPos = (int) (mCurrentProgress * width / 100);
-        int centerY = getHeight() / 2;
-        mRect.left = getPaddingLeft();
-        mRect.right = aimPos + mRect.left;// width - getPaddingRight();
-        mRect.top = centerY - 10;
-        mRect.bottom = centerY + 10;
-        canvas.drawRect(mRect, mPaint);
+        Section lastSection = mSections.size() > 0 ? mSections.get(mSections.size() - 1) : null;
+        if (lastSection == null || mCurrentProgress > lastSection.end) {
+            int width = getWidth() - getPaddingLeft() - getPaddingRight();
+            int aimPos = (int) (mCurrentProgress * width / 100);
+            int centerY = getHeight() / 2;
+            mRect.left = getPaddingLeft();
+            mRect.right = aimPos + mRect.left;// width - getPaddingRight();
+            mRect.top = centerY - 10;
+            mRect.bottom = centerY + 10;
+            canvas.drawRect(mRect, mPaint);
+        }
 
         for (Section section : mSections) {
             section.doDraw(canvas);
@@ -169,14 +180,15 @@ public class SectionProgressBar extends View {
         return false;
     }
 
+    /**
+     * section
+     */
     private class Section {
-
         private final Paint mBlockPaint;
 
         private final Paint mPaint;
         private RectF mSectionRect;
         private RectF mBlockRect;
-        private AnimationOnSelection mAnimRunable;
 
         public Section(float start, float end) {
             this.mPaint = new Paint();
@@ -221,9 +233,21 @@ public class SectionProgressBar extends View {
 
             if (mIsSelected && mAnimTimer != null) {
                 int alpha = mAnimTimer.getAlpha();
-                mPaint.setAlpha(alpha);
-                mPaint.setStrokeWidth(alpha / 2);
                 mPaint.setColor(Color.parseColor("#ff00ff"));
+                mPaint.setAlpha(alpha);
+//                // test code
+//                Paint tPaint = new Paint();
+//                tPaint.setTextSize(24);
+//                tPaint.setColor(Color.parseColor("#000000"));
+//                tPaint.setStrokeWidth(2);
+//                tPaint.setTextAlign(Align.LEFT);
+//                Rect bounds = new Rect();
+//                String testString = "a:" + alpha;
+//                tPaint.getTextBounds(testString, 0, testString.length(), bounds);
+//                tPaint.setAlpha(alpha);
+//                canvas.drawText(testString, getMeasuredWidth() / 2 - bounds.width() / 2, getMeasuredHeight() / 2 + bounds.height() / 2, tPaint);
+            } else {
+                mPaint.setColor(getResources().getColor(R.color.colorAccent));
             }
             canvas.drawRect(mSectionRect, mPaint);
             canvas.drawRect(mBlockRect, mBlockPaint);
@@ -238,55 +262,62 @@ public class SectionProgressBar extends View {
                 mAnimTimer.start();
             } else if (!flag && mAnimTimer != null) {
                 mAnimTimer.stop();
+                mAnimTimer = null;
             }
         }
     }
 
+    /**
+     * for anim.
+     */
     private class AnimationTimer {
+        public static final int MAX_ALPHA = 200;
+        public static final int MIN_ALPHA = 50;
+        public static final int ALPHA_STEP = 20;
+
         TimerTask timerTask;
         Timer timer;
-        int alpha = 100;
+        int alpha = MAX_ALPHA;
 
-        byte animDirection = 1;
-        private boolean mStop;
+        byte animDirection = 1;// 0:fade in, 1: fade out.
 
         public AnimationTimer() {
             timer = new Timer();
             timerTask = new TimerTask() {
                 @Override
                 public void run() {
-//                    while (!mStop) {
                     switch (animDirection) {
                         case 0:
-                            if (alpha < 100) {
-                                alpha += 5;
+                            if (alpha < MAX_ALPHA) {
+                                alpha += ALPHA_STEP;
+                                if (alpha > MAX_ALPHA) {
+                                    alpha = MAX_ALPHA;
+                                }
                                 postInvalidate();
                             } else {
-                                alpha = 100;
+                                alpha = MAX_ALPHA;
                                 animDirection = 1;
                             }
                             break;
                         case 1:
-                            if (alpha > 0) {
-                                alpha -= 5;
+                            if (alpha > MIN_ALPHA) {
+                                alpha -= ALPHA_STEP;
+                                if (alpha < MIN_ALPHA) {
+                                    alpha = MIN_ALPHA;
+                                }
                                 postInvalidate();
                             } else {
-                                alpha = 0;
+                                alpha = MIN_ALPHA;
                                 animDirection = 0;
                             }
                             break;
                     }
-//                    }
-
-                    // reset
-//                    mAlpha = 100;
-//                    animDirection = 1;
                 }
             };
         }
 
         public void start() {
-            timer.schedule(timerTask, 500, 500);
+            timer.schedule(timerTask, 0, 80);
         }
 
         private void stop() {
@@ -303,68 +334,6 @@ public class SectionProgressBar extends View {
 
         public int getAlpha() {
             return alpha;
-        }
-    }
-
-    /**
-     * make selection anim work.
-     */
-    private class AnimationOnSelection implements Runnable {
-        private final Thread thread;
-        byte animDirection = 1;
-        private boolean mStop;
-
-        public AnimationOnSelection() {
-            this.thread = new Thread(this);
-            this.thread.start();
-        }
-
-        public void stop() {
-            mStop = true;
-        }
-
-        @Override
-        public void run() {
-            while (!mStop) {
-                switch (animDirection) {
-                    case 0:
-                        if (mAlpha < 100) {
-                            try {
-                                synchronized (thread) {
-                                    mAlpha += 5;
-                                    thread.wait(1500);
-                                }
-                                postInvalidate();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            mAlpha = 100;
-                            animDirection = 1;
-                        }
-                        break;
-                    case 1:
-                        if (mAlpha > 0) {
-                            try {
-                                synchronized (thread) {
-                                    mAlpha -= 5;
-                                    thread.wait(1500);
-                                }
-                                postInvalidate();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            mAlpha = 0;
-                            animDirection = 0;
-                        }
-                        break;
-                }
-            }
-
-            // reset
-            mAlpha = 100;
-            animDirection = 1;
         }
     }
 }
