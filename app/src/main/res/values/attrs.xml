@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SectionProgressBar">
+        <!--分隔块儿颜色-->
+        <attr name="split_block_color" format="color"/>
+        <!--分隔块儿宽度 默认1dp-->
+        <attr name="split_block_width" format="dimension"/>
+        <!--分隔块儿高度 >0 <view height, 默认progress view的高度-->
+        <attr name="split_block_height" format="dimension"/>
+
+        <!--进度条颜色-->
+        <attr name="progress_bar_color" format="color"/>
+        <!--进度条中进度的高度 >0 <view height, 默认progress view的高度-->
+        <attr name="progress_bar_height" format="dimension"/>
+
+        <!--段落选中启用动画-->
+        <attr name="section_anim_on_selection" format="boolean"/>
+        <!--段落支持点击选中-->
+        <attr name="section_selectable_by_click" format="boolean"/>
+    </declare-styleable>
+</resources>
