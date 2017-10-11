@@ -392,14 +392,14 @@ public class SectionProgressBar extends View {
      * you can change below configs as your wish.
      */
     private class AnimationTimer {
-        static final int MAX_STEP = 200;
-        static final int MIN_STEP = 50;
-        static final int ALPHA_STEP = 20;
+        static final int MAX_VALUE = 200;
+        static final int MIN_VALUE = 50;
+        static final int EVALUATOR_STEP = 20;
         static final int TIMER_TRIGGER = 80;
 
         TimerTask timerTask;
         Timer timer;
-        int step = MAX_STEP;
+        int step = MAX_VALUE;
 
         byte animDirection = 1;// 0:fade in, 1: fade out.
 
@@ -410,26 +410,26 @@ public class SectionProgressBar extends View {
                 public void run() {
                     switch (animDirection) {
                         case 0:
-                            if (step < MAX_STEP) {
-                                step += ALPHA_STEP;
-                                if (step > MAX_STEP) {
-                                    step = MAX_STEP;
+                            if (step < MAX_VALUE) {
+                                step += EVALUATOR_STEP;
+                                if (step > MAX_VALUE) {
+                                    step = MAX_VALUE;
                                 }
                                 postInvalidate();
                             } else {
-                                step = MAX_STEP;
+                                step = MAX_VALUE;
                                 animDirection = 1;
                             }
                             break;
                         case 1:
-                            if (step > MIN_STEP) {
-                                step -= ALPHA_STEP;
-                                if (step < MIN_STEP) {
-                                    step = MIN_STEP;
+                            if (step > MIN_VALUE) {
+                                step -= EVALUATOR_STEP;
+                                if (step < MIN_VALUE) {
+                                    step = MIN_VALUE;
                                 }
                                 postInvalidate();
                             } else {
-                                step = MIN_STEP;
+                                step = MIN_VALUE;
                                 animDirection = 0;
                             }
                             break;
