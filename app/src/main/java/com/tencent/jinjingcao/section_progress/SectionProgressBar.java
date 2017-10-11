@@ -388,7 +388,7 @@ public class SectionProgressBar extends View {
 
     /**
      * for anim on select.
-     * from 50 to 200, step 20, and trigger per 80 milliseconds,
+     * from 50 to 200 (0 ~ 255), step 20, and trigger per 80 milliseconds,
      * you can change below configs as your wish.
      */
     private class AnimationTimer {
