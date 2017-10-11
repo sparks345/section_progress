@@ -59,13 +59,32 @@
         app:layout_constraintTop_toBottomOf="@+id/seekBar"
         tools:visibility="invisible"/>
 
+    <!--demo with attributes-->
     <com.tencent.jinjingcao.section_progress.SectionProgressBar
         android:id="@+id/sec_bar"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="@android:color/holo_orange_light"
         android:paddingLeft="10dp"
-        android:paddingRight="20dp"/>
+        android:paddingRight="20dp"
+        app:progress_bar_color="@color/colorAccent"
+        app:progress_bar_height="9dp"
+        app:section_anim_on_selection="true"
+        app:split_block_color="@color/colorPrimary"
+        app:section_anim_blink_color="#FF770000"
+        app:split_block_height="13dp"
+        app:split_block_width="7dp"/>
+
+    <!--demo without attributes-->
+    <com.tencent.jinjingcao.section_progress.SectionProgressBar
+        android:id="@+id/sec_bar2"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/darker_gray"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        app:section_anim_on_selection="true"/>
 
     <Button
         android:id="@+id/btnIncreaseProgress"

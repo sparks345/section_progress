@@ -15,7 +15,9 @@
 
         <!--段落选中启用动画-->
         <attr name="section_anim_on_selection" format="boolean"/>
-        <!--段落支持点击选中-->
-        <attr name="section_selectable_by_click" format="boolean"/>
+        <!--段落选中动画闪烁的颜色-->
+        <attr name="section_anim_blink_color" format="color"/>
+        <!--TODO 段落支持点击选中-->
+        <!--<attr name="section_selectable_by_click" format="boolean"/>-->
     </declare-styleable>
 </resources>

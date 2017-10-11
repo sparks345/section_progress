@@ -9,12 +9,14 @@ import android.widget.Button;
 public class MainActivity extends Activity implements OnClickListener {
 
     private SectionProgressBar secBar;
+    private SectionProgressBar secBar2;
     private Button btnIncreaseProgress;
     private Button btnAddBlock;
     private Button btnDelBlock;
 
     private void assignViews() {
         secBar = (SectionProgressBar) findViewById(R.id.sec_bar);
+        secBar2 = (SectionProgressBar) findViewById(R.id.sec_bar2);
 
         btnIncreaseProgress = (Button) findViewById(R.id.btnIncreaseProgress);
         btnAddBlock = (Button) findViewById(R.id.btnAddBlock);
@@ -47,13 +49,19 @@ public class MainActivity extends Activity implements OnClickListener {
                     aimProgress = 100;
                 }
                 secBar.setProgress(aimProgress);
+                secBar2.setProgress(aimProgress);
                 break;
             case R.id.btnAddBlock:
                 secBar.setSplitAtCurrent();
+                secBar2.setSplitAtCurrent();
                 break;
             case R.id.btnDelBlock:
                 if (secBar.selectLastSection()) {
                     secBar.backDelSection();
+                }
+
+                if (secBar2.selectLastSection()) {
+                    secBar2.backDelSection();
                 }
                 break;
         }
