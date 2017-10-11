@@ -24,9 +24,13 @@ import android.view.View;
  */
 
 public class SectionProgressBar extends View {
+
     public static final String TAG = "SectionProgressBar";
+
+    // density.
     private final float density = getResources().getDisplayMetrics().density;
 
+    // default attrs.
     private static final int DEFAULT_SPLIT_BLOCK_COLOR = Color.BLUE;
     private static final int DEFAULT_SPLIT_BLOCK_WIDTH = 6;
     private static final int DEFAULT_SPLIT_BLOCK_HEIGHT = 15;
@@ -34,27 +38,32 @@ public class SectionProgressBar extends View {
     private static final int DEFAULT_PROGRESS_BAR_HEIGHT = 10;
     private static final int DEFAULT_SECTION_BLINK_COLOR = Color.YELLOW;
 
+    // use in progress paint.
     private final Paint mPaint;
     private final Paint mSplitBlockPaint;
     private final RectF mRect;
-    private final int mBlockColor;
+
+    // tmp attrs.
     private final int mAttrBlockHeight;
     private final int mAttrProgressHeight;
-    private final int mSectionAnimBlinkColor;
-    private ArgbEvaluator mArgbEvaluator;
+
+    // attrs.
+    private final int mBlockColor;
+    private int mBlockWidth;
     private int mBlockHeight;
     private final int mProgressColor;
     private int mProgressSize;
     private final boolean mSectionAnimEnable;
+    private final int mSectionAnimBlinkColor;
+
+    // used in section anim.
+    private ArgbEvaluator mArgbEvaluator;
 
     // all sections in current progress bar.
     private ArrayList<Section> mSections = new ArrayList<>();
 
     // current progress.
     private float mCurrentProgress;
-
-    // block width.
-    private int mBlockWidth;
 
     // anim timer for select section.
     private AnimationTimer mAnimTimer;
@@ -106,15 +115,6 @@ public class SectionProgressBar extends View {
         this.mPaint.setStrokeWidth(mProgressSize);
     }
 
-    // attributes:
-    // split_block_color
-    // split_block_width
-    // split_block_height
-    // progress_bar_color
-    // progress_bar_height
-    // section_anim_on_selection
-    // section_selectable_by_click
-
 
     @Override
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
@@ -124,6 +124,11 @@ public class SectionProgressBar extends View {
         }
     }
 
+    /**
+     * reset height.
+     * if visibility is gone at init.
+     * if don't set height.
+     */
     private void fixAttrDefaultHeight() {
         if (mAttrBlockHeight <= 0) {
             mBlockHeight = getHeight() > 0 ? getHeight() : (int) (DEFAULT_SPLIT_BLOCK_HEIGHT * density);
@@ -214,6 +219,11 @@ public class SectionProgressBar extends View {
         postInvalidate();
     }
 
+    /**
+     * now work.
+     *
+     * @param canvas canvas.
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         // draw main progress. only case while progress gt last section end.
@@ -237,10 +247,20 @@ public class SectionProgressBar extends View {
         super.onDraw(canvas);
     }
 
+    /**
+     * return current progress.
+     *
+     * @return current progress.
+     */
     public float getCurrentProgress() {
         return mCurrentProgress;
     }
 
+    /**
+     * select last section.
+     *
+     * @return flag.
+     */
     public boolean selectLastSection() {
         if (mSections.size() > 0) {
             Section lastSection = mSections.get(mSections.size() - 1);
@@ -257,7 +277,7 @@ public class SectionProgressBar extends View {
     }
 
     /**
-     * section
+     * blocked section in progress.
      */
     private class Section {
         private final Paint mBlockPaint;
@@ -326,12 +346,12 @@ public class SectionProgressBar extends View {
             int step = mAnimTimer.getStep();
             float percent = step / 256.0f;
 
+            int color = (int) mArgbEvaluator.evaluate(percent, mProgressColor, mSectionAnimBlinkColor);
+            mPaint.setColor(color);
+
 //            mPaint.setColor(Color.parseColor("#ff00ff"));
 //            mPaint.setColor(mSectionAnimBlinkColor);
 //            mPaint.setAlpha(step);// set alpha after set color!!!
-
-            int color = (int) mArgbEvaluator.evaluate(percent, mProgressColor, mSectionAnimBlinkColor);
-            mPaint.setColor(color);
 
 //                // test code
 //                Paint tPaint = new Paint();
@@ -346,6 +366,11 @@ public class SectionProgressBar extends View {
 //                canvas.drawText(testString, getMeasuredWidth() / 2 - bounds.width() / 2, getMeasuredHeight() / 2 + bounds.height() / 2, tPaint);
         }
 
+        /**
+         * make section to selection status.
+         *
+         * @param flag flag
+         */
         public void setSelection(boolean flag) {
             mIsSelected = flag;
             Log.i(TAG, "setSelection: flag->" + flag + ", mSectionAnimEnable->" + mSectionAnimEnable);
@@ -362,14 +387,15 @@ public class SectionProgressBar extends View {
     }
 
     /**
-     * for anim.
-     * from 50 to 200, step 20, and trigger per 80 milliseconds, you can change below as your wish.
+     * for anim on select.
+     * from 50 to 200, step 20, and trigger per 80 milliseconds,
+     * you can change below configs as your wish.
      */
     private class AnimationTimer {
-        public static final int MAX_STEP = 200;
-        public static final int MIN_STEP = 50;
-        public static final int ALPHA_STEP = 20;
-        public static final int TIMER_TRIGGER = 80;
+        static final int MAX_STEP = 200;
+        static final int MIN_STEP = 50;
+        static final int ALPHA_STEP = 20;
+        static final int TIMER_TRIGGER = 80;
 
         TimerTask timerTask;
         Timer timer;
@@ -377,7 +403,7 @@ public class SectionProgressBar extends View {
 
         byte animDirection = 1;// 0:fade in, 1: fade out.
 
-        public AnimationTimer() {
+        AnimationTimer() {
             timer = new Timer();
             timerTask = new TimerTask() {
                 @Override
@@ -412,7 +438,7 @@ public class SectionProgressBar extends View {
             };
         }
 
-        public void start() {
+        void start() {
             timer.schedule(timerTask, 0, TIMER_TRIGGER);
         }
 
@@ -428,7 +454,7 @@ public class SectionProgressBar extends View {
             }
         }
 
-        public int getStep() {
+        int getStep() {
             return step;
         }
     }
