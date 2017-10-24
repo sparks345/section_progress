@@ -69,9 +69,9 @@
         android:paddingRight="20dp"
         app:progress_bar_color="@color/colorAccent"
         app:progress_bar_height="9dp"
+        app:section_anim_blink_color="#FF770000"
         app:section_anim_on_selection="true"
         app:split_block_color="@color/colorPrimary"
-        app:section_anim_blink_color="#FF770000"
         app:split_block_height="13dp"
         app:split_block_width="7dp"/>
 
@@ -103,5 +103,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Del Block"/>
+
+    <Button
+        android:id="@+id/btnReset"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Reset"/>
+
+    <com.tencent.jinjingcao.section_progress.StepSeekBar
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+
+        android:background="@android:color/holo_blue_light"/>
 
 </LinearLayout>

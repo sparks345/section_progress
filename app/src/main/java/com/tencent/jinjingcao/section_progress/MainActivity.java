@@ -13,6 +13,7 @@ public class MainActivity extends Activity implements OnClickListener {
     private Button btnIncreaseProgress;
     private Button btnAddBlock;
     private Button btnDelBlock;
+    private Button btnReset;
 
     private void assignViews() {
         secBar = (SectionProgressBar) findViewById(R.id.sec_bar);
@@ -21,10 +22,12 @@ public class MainActivity extends Activity implements OnClickListener {
         btnIncreaseProgress = (Button) findViewById(R.id.btnIncreaseProgress);
         btnAddBlock = (Button) findViewById(R.id.btnAddBlock);
         btnDelBlock = (Button) findViewById(R.id.btnDelBlock);
+        btnReset = (Button) findViewById(R.id.btnReset);
 
         btnIncreaseProgress.setOnClickListener(this);
         btnAddBlock.setOnClickListener(this);
         btnDelBlock.setOnClickListener(this);
+        btnReset.setOnClickListener(this);
     }
 
     @Override
@@ -63,6 +66,10 @@ public class MainActivity extends Activity implements OnClickListener {
                 if (secBar2.selectLastSection()) {
                     secBar2.backDelSection();
                 }
+                break;
+            case R.id.btnReset:
+                secBar.reset();
+                secBar2.reset();
                 break;
         }
     }

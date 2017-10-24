@@ -220,6 +220,16 @@ public class SectionProgressBar extends View {
     }
 
     /**
+   	 * clear all sections, and reset progress.
+   	 */
+    public void reset() {
+   		mSections.clear();
+   		mCurrentProgress = 0;
+
+   		postInvalidate();
+   	}
+
+    /**
      * now work.
      *
      * @param canvas canvas.

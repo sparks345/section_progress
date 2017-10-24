@@ -19,5 +19,17 @@
         <attr name="section_anim_blink_color" format="color"/>
         <!--TODO 段落支持点击选中-->
         <!--<attr name="section_selectable_by_click" format="boolean"/>-->
+
+        <!--次要进度，值要小于主进度-->
+        <attr name="sub_progress_bar_color" format="color"/>
+        <!--次进度当前进度点-->
+        <attr name="sub_progress_bar_thumb" format="reference"/>
+        <!--次进度当前进度点尺寸-->
+        <attr name="sub_progress_bar_thumb_size" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="StepSeekBar">
+        <!--每个档位的进度-->
+        <attr name="step" format="integer"/>
     </declare-styleable>
 </resources>
